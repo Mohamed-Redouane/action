@@ -27,6 +27,8 @@ jobs:
 
       - name: Run Backend Tests
         working-directory: ./backend
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: npm test
 
   frontend-and-cypress-tests:
@@ -54,6 +56,7 @@ jobs:
         
       - name: Install nodemon
         run: npm install -g nodemon
+
       - name: Install Backend Dependencies
         working-directory: ./backend
         run: npm install
@@ -68,6 +71,7 @@ jobs:
         env:
           NODE_ENV: test
           PORT: 3000
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
       - name: Wait for Backend Server
         run: wait-on http://localhost:3000
@@ -82,4 +86,6 @@ jobs:
         run: wait-on http://localhost:5173
 
       - name: Run Cypress Tests
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: npx cypress run
