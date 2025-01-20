@@ -54,6 +54,13 @@ jobs:
         
       - name: Install nodemon
         run: npm install -g nodemon
+      - name: Install Backend Dependencies
+        working-directory: ./backend
+        run: npm install
+
+      - name: Compile Backend Code
+        working-directory: ./backend
+        run: npm run build
 
       - name: Start Backend Server
         working-directory: ./backend
