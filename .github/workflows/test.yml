@@ -51,6 +51,9 @@ jobs:
 
       - name: Install wait-on
         run: npm install -g wait-on
+        
+      - name: Install nodemon
+        run: npm install -g nodemon
 
       - name: Start Backend Server
         working-directory: ./backend
