@@ -25,19 +25,6 @@ jobs:
         working-directory: ./backend
         run: npm install
 
-      - name: Start Backend Server
-        working-directory: ./backend
-        run: npm start > backend.log 2>&1 &
-        env:
-          NODE_ENV: test
-          PORT: 3000
-
-      - name: Wait for Backend Server
-        run: npx wait-on http://localhost:3000 --timeout 120000
-
-      - name: Debug Backend Logs
-        run: cat ./backend/backend.log
-
       - name: Run Backend Tests
         working-directory: ./backend
         run: npm test
@@ -60,32 +47,29 @@ jobs:
 
       - name: Install Cypress Dependencies
         run: npm install
-        # Cypress dependencies installed at the root directory
+        # Assumes Cypress dependencies are installed in the root directory
+
+      - name: Install wait-on
+        run: npm install -g wait-on
 
       - name: Start Backend Server
         working-directory: ./backend
-        run: npm start > backend.log 2>&1 &
+        run: npm run dev &
         env:
           NODE_ENV: test
           PORT: 3000
 
       - name: Wait for Backend Server
-        run: npx wait-on http://localhost:3000 --timeout 120000
+        run: wait-on http://localhost:3000
 
       - name: Start Frontend Server
         working-directory: ./frontend
-        run: npm run dev > frontend.log 2>&1 &
+        run: npm run dev &
         env:
           NODE_ENV: test
 
       - name: Wait for Frontend Server
-        run: npx wait-on http://localhost:5173 --timeout 120000
-
-      - name: Debug Backend Logs
-        run: cat ./backend/backend.log
-
-      - name: Debug Frontend Logs
-        run: cat ./frontend/frontend.log
+        run: wait-on http://localhost:5173
 
       - name: Run Cypress Tests
         run: npx cypress run
