@@ -47,7 +47,10 @@ jobs:
 
       - name: Install Cypress Dependencies
         run: npm install
-        # Assumes Cypress dependencies are installed at the root directory
+        # Assumes Cypress dependencies are installed in the root directory
+
+      - name: Install wait-on
+        run: npm install -g wait-on
 
       - name: Start Backend Server
         working-directory: ./backend
@@ -57,7 +60,7 @@ jobs:
           PORT: 3000
 
       - name: Wait for Backend Server
-        run: npx wait-on http://localhost:3000
+        run: wait-on http://localhost:3000
 
       - name: Start Frontend Server
         working-directory: ./frontend
@@ -66,7 +69,7 @@ jobs:
           NODE_ENV: test
 
       - name: Wait for Frontend Server
-        run: npx wait-on http://localhost:5173
+        run: wait-on http://localhost:5173
 
       - name: Run Cypress Tests
         run: npx cypress run
