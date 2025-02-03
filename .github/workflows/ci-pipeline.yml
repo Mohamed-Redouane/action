@@ -73,7 +73,7 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
       
       - name: Wait for Backend Server
-        run: wait-on http://localhost:3000 --timeout 60000 --verbose
+        run: wait-on http://localhost:3000/health
 
       - name: Start Frontend Server
         working-directory: ./frontend
