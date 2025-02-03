@@ -1,4 +1,3 @@
-// src/controllers/authController.ts
 
 import { Request, Response } from "express";
 import { container } from "../container.js"; 
@@ -7,10 +6,7 @@ import { LoginDTO } from "../dto/loginDTO.js";
 import { clearSessionCookie, setSessionCookie } from "../services/sessionService.js";
 
 export class AuthController {
-  /**
-   * Register a new user (does NOT automatically log them in).
-   * The user must verify email and then log in separately.
-   */
+
   public async register(req: Request, res: Response): Promise<void> {
     try {
       const dto: RegisterDTO = req.body;
@@ -91,10 +87,7 @@ export class AuthController {
     }
   }
 
-  /**
-   * Reset password
-   * Body: { "code": "123456", "newPassword": "NewPass123" }
-   */
+  
   public async resetPassword(req: Request, res: Response): Promise<void> {
     try {
       const { code, newPassword } = req.body;

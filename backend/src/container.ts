@@ -1,4 +1,3 @@
-// src/container.ts
 
 import pool from "./config/db.js";
 import { UserRepository } from "./repositories/userRepository.js";
@@ -7,6 +6,9 @@ import { EmailVerificationRepository } from "./repositories/emailVerificationRep
 import { PasswordResetRepository } from "./repositories/passwordResetRepository.js";
 import { AuthService } from "./services/authService.js";
 import { AuthController } from "./controllers/authController.js";
+
+
+
 
 // Repositories
 const userRepository = new UserRepository(pool);
@@ -19,7 +21,7 @@ const authService = new AuthService(
   userRepository,
   sessionRepository,
   emailVerificationRepository,
-  passwordResetRepository // <-- ADDED here
+  passwordResetRepository 
 );
 
 // Controller

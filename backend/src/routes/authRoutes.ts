@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { container } from "../container.js";
-import { loginRateLimiter, passwordResetRateLimiter, registerRateLimiter } from "../middlewares/rateLimit.js";
+import { loginRateLimiter, passwordResetRateLimiter, registerRateLimiter } from "../middlewares/rateLimitMiddleware.js";
 
 const { authController } = container;
 const router = Router();

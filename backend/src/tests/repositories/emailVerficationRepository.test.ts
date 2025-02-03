@@ -2,10 +2,9 @@ import { describe, it, expect, beforeAll, beforeEach, vi } from "vitest";
 import { Pool } from "pg";
 import { EmailVerificationRepository } from "../../repositories/emailVerificationRepository.js";
 
-// Mock pg (PostgreSQL)
 vi.mock("pg", () => {
   const mockClient = {
-    query: vi.fn(), // Mock query method
+    query: vi.fn(),
   };
   return { Pool: vi.fn(() => mockClient) };
 });
@@ -15,7 +14,7 @@ describe("EmailVerificationRepository", () => {
   let emailVerificationRepository: EmailVerificationRepository;
 
   beforeAll(() => {
-    pool = new Pool(); // Use mocked Pool
+    pool = new Pool(); 
     emailVerificationRepository = new EmailVerificationRepository(pool);
   });
 
@@ -32,7 +31,7 @@ describe("EmailVerificationRepository", () => {
         expiresAt: 1738463513,
       };
 
-      pool.query.mockResolvedValueOnce({}); // Mock query's resolved value
+      pool.query.mockResolvedValueOnce({}); 
 
       await emailVerificationRepository.createRequest(mockRequest);
 

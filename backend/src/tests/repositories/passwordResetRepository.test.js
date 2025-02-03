@@ -2,7 +2,6 @@ import { describe, it, expect, beforeAll, beforeEach, vi } from 'vitest';
 import { Pool } from "pg";
 import { PasswordResetRepository } from "../../repositories/passwordResetRepository";
 
-// Mock the pg module
 vi.mock("pg", () => {
   const mockClient = {
     query: vi.fn(),

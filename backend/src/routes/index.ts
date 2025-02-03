@@ -5,6 +5,7 @@ const router = Router();
 
 router.use("/auth", authRoutes);
 
+
 router.get("/error-test", (_req, _res) => {
     throw new Error("Test error from route");
   });

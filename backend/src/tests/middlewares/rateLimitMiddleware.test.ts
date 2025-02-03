@@ -5,14 +5,13 @@ import {
   loginRateLimiter,
   registerRateLimiter,
   passwordResetRateLimiter,
-} from "../../middlewares/rateLimit.js";
+} from "../../middlewares/rateLimitMiddleware.js";
 
 describe("Rate Limit Middleware", () => {
   let app: express.Express;
 
   beforeEach(() => {
     app = express();
-    // Use block bodies so the route handler returns void.
     app.use(
       "/login",
       loginRateLimiter,

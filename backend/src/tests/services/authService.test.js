@@ -1,24 +1,14 @@
-// AuthService.test.js
 
-// Set the environment variable before any imports that use it.
 process.env.RESEND_API_KEY = 're_dummy_api_key';
 
-import { randomBytes } from "crypto";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
-// Import the AuthService and its dependencies.
 import { AuthService } from "../../services/authService";
-// Instead of importing RegisterDTO and LoginDTO as constructors,
-// we will create plain objects that conform to their structure.
-// import { RegisterDTO } from "../../dto/registerDTO";
-// import { LoginDTO } from "../../dto/loginDTO";
 
-// These are our external functions that AuthService uses.
 import { hashPassword, verifyPassword, verifyPasswordNotPwned } from "../../services/passwordService";
 import { sendPasswordResetEmail, sendVerificationEmail } from "../../services/emailService";
 import { verifyEmailInput } from "../../utils/emailValidation";
 
-// Create mocks for repositories.
 const mockUserRepo = {
   createUser: vi.fn(),
   findByEmail: vi.fn(),
@@ -45,7 +35,6 @@ const mockPasswordResetRepo = {
   deleteById: vi.fn(),
 };
 
-// Stub external functions.
 vi.mock("../../services/passwordService", () => ({
   hashPassword: vi.fn(),
   verifyPassword: vi.fn(),
@@ -61,10 +50,8 @@ vi.mock("../../utils/emailValidation", () => ({
   verifyEmailInput: vi.fn(),
 }));
 
-// Create an instance of AuthService with our mocks.
 let authService;
 beforeEach(() => {
-  // Reset all mock calls before each test.
   vi.clearAllMocks();
   authService = new AuthService(
     mockUserRepo,
@@ -76,20 +63,15 @@ beforeEach(() => {
 
 describe("AuthService.register", () => {
   it("should register a user successfully", async () => {
-    // Arrange: Create a plain object that conforms to RegisterDTO.
     const dto = {
       email: "test@example.com",
       username: "testuser",
       password: "StrongPassword123!",
     };
 
-    // Make sure the email is valid.
     verifyEmailInput.mockReturnValue(true);
-    // Assume the password is not pwned.
     verifyPasswordNotPwned.mockResolvedValue(true);
-    // Fake hashed password.
     hashPassword.mockResolvedValue("hashedpassword");
-    // Simulate successful user creation.
     const createdUser = {
       id: 1,
       email: dto.email,
@@ -97,22 +79,17 @@ describe("AuthService.register", () => {
       emailVerified: false,
     };
     mockUserRepo.createUser.mockResolvedValue(createdUser);
-    // Simulate successful verification request creation.
     mockVerificationRepo.createRequest.mockResolvedValue({ rowCount: 1 });
-    // Simulate sendVerificationEmail (no return).
     sendVerificationEmail.mockResolvedValue();
 
-    // Act
     const response = await authService.register(dto);
 
-    // Assert
+
     expect(verifyEmailInput).toHaveBeenCalledWith(dto.email);
     expect(verifyPasswordNotPwned).toHaveBeenCalledWith(dto.password);
     expect(hashPassword).toHaveBeenCalledWith(dto.password);
     expect(mockUserRepo.createUser).toHaveBeenCalledWith(dto, "hashedpassword");
-    // Expect the verificationRepo to be called with an object containing userId, email, code, and expiresAt.
     expect(mockVerificationRepo.createRequest).toHaveBeenCalled();
-    // And the verification email to be sent.
     expect(sendVerificationEmail).toHaveBeenCalledWith(
       dto.email,
       expect.any(String),
@@ -127,7 +104,7 @@ describe("AuthService.register", () => {
   });
 
   it("should throw an error for invalid email", async () => {
-    // Arrange: Create a plain object for RegisterDTO.
+
     const dto = {
       email: "invalid-email",
       username: "testuser",
@@ -135,7 +112,7 @@ describe("AuthService.register", () => {
     };
     verifyEmailInput.mockReturnValue(false);
 
-    // Act & Assert
+
     await expect(authService.register(dto)).rejects.toThrow("Invalid email format");
   });
 
@@ -157,7 +134,7 @@ describe("AuthService.register", () => {
 
 describe("AuthService.login", () => {
   it("should log in a user successfully", async () => {
-    // Arrange: Create a plain object that conforms to LoginDTO.
+
     const dto = {
       email: "test@example.com",
       password: "StrongPassword123!",
@@ -173,14 +150,11 @@ describe("AuthService.login", () => {
     mockUserRepo.getUserPasswordHash.mockResolvedValue("hashedpassword");
     verifyPassword.mockResolvedValue(true);
 
-    // For creating a session, we use the real randomBytes function.
-    // Optionally, you can stub it; here we let it run.
+    
     mockSessionRepo.createSession.mockResolvedValue();
 
-    // Act
     const { user: userResponse, sessionToken } = await authService.login(dto);
 
-    // Assert
     expect(mockUserRepo.findByEmail).toHaveBeenCalledWith(dto.email);
     expect(mockUserRepo.getUserPasswordHash).toHaveBeenCalledWith(user.id);
     expect(verifyPassword).toHaveBeenCalledWith("hashedpassword", dto.password);
@@ -305,14 +279,14 @@ describe("AuthService.resetPassword", () => {
   it("should reset the password successfully", async () => {
     const code = "123456";
     const newPassword = "NewStrongPassword123!";
-    // Create a mock password reset request from the DB.
+
     const resetRequest = {
       id: "reset1",
       userId: 1,
-      expiresAt: Math.floor(Date.now() / 1000) + 60, // valid for 60 sec from now
+      expiresAt: Math.floor(Date.now() / 1000) + 60, 
     };
     mockPasswordResetRepo.findByCode.mockResolvedValue(resetRequest);
-    // Password is safe and can be hashed.
+
     verifyPasswordNotPwned.mockResolvedValue(true);
     hashPassword.mockResolvedValue("newhashedpassword");
 
@@ -339,7 +313,7 @@ describe("AuthService.resetPassword", () => {
     const resetRequest = {
       id: "reset_expired",
       userId: 1,
-      expiresAt: Math.floor(Date.now() / 1000) - 10, // expired 10 seconds ago
+      expiresAt: Math.floor(Date.now() / 1000) - 10, 
     };
     mockPasswordResetRepo.findByCode.mockResolvedValue(resetRequest);
 

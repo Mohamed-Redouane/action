@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { getVerificationEmailHtml, getPasswordResetEmailHtml } from "./emailTemplates.js";
+import { getVerificationEmailHtml, getPasswordResetEmailHtml } from "./emailTemplate.js";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
@@ -7,9 +7,9 @@ export async function sendVerificationEmail(email: string, code: string, usernam
   const htmlContent = getVerificationEmailHtml(code, username);
   try {
     await resend.emails.send({
-      from: "no-reply@yourdomain.com",
+      from: "no-reply@ourdomain.com",
       to: email,
-      subject: "Verify Your Email - Your App",
+      subject: "Verify Your Email - Concordia Guide",
       html: htmlContent,
     });
     console.log(`✅ Verification email sent to ${email}`);
@@ -23,9 +23,9 @@ export async function sendPasswordResetEmail(email: string, code: string, userna
   const htmlContent = getPasswordResetEmailHtml(code, username);
   try {
     await resend.emails.send({
-      from: "no-reply@yourdomain.com",
+      from: "no-reply@ourdomain.com",
       to: email,
-      subject: "Reset Your Password - Your App",
+      subject: "Reset Your Password - Concordia Guide",
       html: htmlContent,
     });
     console.log(`✅ Password reset email sent to ${email}`);
