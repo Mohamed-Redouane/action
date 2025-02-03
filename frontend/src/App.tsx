@@ -1,14 +1,18 @@
-
-import './App.css'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 
 function App() {
- 
-
   return (
-    <div className="p-4 bg-gradient-to-r from-blue-500 to-gray-700 text-white">
-    <h1>Tailwind CSS is working!</h1>
-  </div>
+    <Router>
+      <Routes>
+        <Route path="/home" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+      </Routes>
+    </Router>
   );
 }
 
-export default App
+export default App;

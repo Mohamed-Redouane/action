@@ -4,12 +4,17 @@ import morgan from 'morgan';
 import routes from './routes/index.js';           
 import { errorMiddleware } from './middlewares/errorMiddleware.js'
 import pool from './config/db.js'
+import { sessionCookieMiddleware } from "./middlewares/sessionMiddleware.js";
+import cookieParser from "cookie-parser";
 
 const app: Application = express();
-
 app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json()); 
+app.use(cookieParser());
+
+app.use(sessionCookieMiddleware);
+
 
 pool.connect((err,client, release) => {
     if (err) {
