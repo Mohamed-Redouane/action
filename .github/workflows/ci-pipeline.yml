@@ -72,20 +72,23 @@ jobs:
       - name: Check Backend Health
         run: curl -v http://localhost:3000 || echo "Backend not responding"
 
-      - name: Wait for Backend Server
-        run: wait-on http://localhost:3000
-
+     
       - name: Check Frontend Health
         run: curl -v http://localhost:5173 || echo "Frontend not responding"
         
       - name: Show Frontend Logs
         run: cat frontend.log || echo "No frontend logs found" 
 
+
       - name: Start Frontend Server
         working-directory: ./frontend
         run: npm run dev &
         env:
           NODE_ENV: test
+
+      - name: Wait for Backend Server
+        run: wait-on http://localhost:3000
+  
 
       - name: Wait for Frontend Server
         run: wait-on http://localhost:5173
