@@ -7,7 +7,7 @@
     "build": "tsc",
     "dev": "nodemon --watch src --exec \"npm run build && node dist/server.mjs\"",
     "start": "node dist/server.mjs",
-    "test": "vitest"
+    "test": "vitest --run"
   },
   "keywords": [],
   "author": "",
