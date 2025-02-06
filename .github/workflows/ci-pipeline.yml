@@ -2,12 +2,8 @@ name: Automated Testing Pipeline
 
 on:
   push:
-    branches:
-      - main
   pull_request:
-    branches:
-      - main
-
+  
 jobs:
   backend-tests:
     name: Run Backend Tests
@@ -29,6 +25,7 @@ jobs:
         working-directory: ./backend
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
         run: npm test
 
   frontend-and-cypress-tests:
@@ -71,6 +68,7 @@ jobs:
           NODE_ENV: test
           PORT: 3000
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
       
       - name: Wait for Backend Server
         run: wait-on http://localhost:3000/health
@@ -87,4 +85,5 @@ jobs:
       - name: Run Cypress Tests
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
         run: npx cypress run
