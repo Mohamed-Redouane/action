@@ -11,6 +11,9 @@ jobs:
   sonarcloud-analysis:
     name: SonarCloud Analysis
     runs-on: ubuntu-latest
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      GIT_TOKEN: ${{ secrets.GIT_TOKEN }}  # Fixed secret name
 
     steps:
       - name: Checkout Code
@@ -24,17 +27,13 @@ jobs:
           node-version: 20
           cache: 'npm'
 
-      - name: Cache Backend Dependencies
+      - name: Cache Dependencies
         uses: actions/cache@v3
         with:
-          path: backend/node_modules
-          key: ${{ runner.os }}-backend-${{ hashFiles('backend/package-lock.json') }}
-
-      - name: Cache Frontend Dependencies
-        uses: actions/cache@v3
-        with:
-          path: frontend/node_modules
-          key: ${{ runner.os }}-frontend-${{ hashFiles('frontend/package-lock.json') }}
+          path: |
+            backend/node_modules
+            frontend/node_modules
+          key: ${{ runner.os }}-${{ hashFiles('backend/package-lock.json', 'frontend/package-lock.json') }}
 
       - name: Install Backend Dependencies
         working-directory: backend
@@ -56,11 +55,13 @@ jobs:
         continue-on-error: true
         run: npm test -- --coverage
 
+      - name: Verify Coverage Reports
+        run: |
+          [ -f backend/coverage/lcov.info ] || (echo "Backend coverage missing" && exit 1)
+          [ -f frontend/coverage/lcov.info ] || (echo "Frontend coverage missing" && exit 1)
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v4.1.0
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
         with:
           args: >
             -Dsonar.organization=Mohamed-Redouane
