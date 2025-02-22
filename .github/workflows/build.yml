@@ -3,31 +3,46 @@ name: SonarCloud Analysis
 on:
   push:
     branches:
-      - main  
+      - main
   pull_request:
-    types: [opened, synchronize, reopened]  # Also analyze PRs
+    types: [opened, synchronize, reopened]
 
 jobs:
-  sonar:
+  sonarcloud-analysis:
     name: SonarCloud Analysis
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
+
+      - name: Cache Backend Dependencies
+        uses: actions/cache@v3
+        with:
+          path: backend/node_modules
+          key: ${{ runner.os }}-backend-${{ hashFiles('backend/package-lock.json') }}
+
+      - name: Cache Frontend Dependencies
+        uses: actions/cache@v3
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.os }}-frontend-${{ hashFiles('frontend/package-lock.json') }}
 
       - name: Install Backend Dependencies
         working-directory: backend
-        run: npm install
+        run: npm ci --prefer-offline
 
       - name: Install Frontend Dependencies
         working-directory: frontend
-        run: npm install
+        run: npm ci --prefer-offline
 
       - name: Run Backend Tests with Coverage
         working-directory: backend
@@ -38,16 +53,21 @@ jobs:
 
       - name: Run Frontend Tests with Coverage
         working-directory: frontend
-        run: npm test -- --coverage || echo "Frontend tests failed, continuing SonarCloud analysis"
+        continue-on-error: true
+        run: npm test -- --coverage
 
-      - name: SonarCloud Analysis
-        run: |
-          npx sonarqube-scanner \
-            -Dsonar.organization=Mohamed-Redouane \
-            -Dsonar.projectKey=redouane \
-            -Dsonar.sources=backend,frontend \
-            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/coverage/** \
-            -Dsonar.javascript.lcov.reportPaths=backend/coverage/lcov.info,frontend/coverage/lcov.info \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-            -Dsonar.branch.name=main
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        with:
+          args: >
+            -Dsonar.organization=Mohamed-Redouane
+            -Dsonar.projectKey=redouane
+            -Dsonar.sources=backend,frontend
+            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/coverage/**
+            -Dsonar.javascript.lcov.reportPaths=backend/coverage/lcov.info,frontend/coverage/lcov.info
+            -Dsonar.coverage.exclusions=**/test/**,**/__mocks__/**
+            -Dsonar.qualitygate.wait=true
+            -Dsonar.branch.name=${{ github.ref_name }}
+            -Dsonar.branch.target=main
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
