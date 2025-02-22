@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      GIT_TOKEN: ${{ secrets.GIT_TOKEN }}  # Fixed secret name
+      GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}  # Using your custom secret name
 
     steps:
       - name: Checkout Code
@@ -27,33 +27,23 @@ jobs:
           node-version: 20
           cache: 'npm'
 
-      - name: Cache Dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            backend/node_modules
-            frontend/node_modules
-          key: ${{ runner.os }}-${{ hashFiles('backend/package-lock.json', 'frontend/package-lock.json') }}
-
-      - name: Install Backend Dependencies
-        working-directory: backend
-        run: npm ci --prefer-offline
-
-      - name: Install Frontend Dependencies
-        working-directory: frontend
-        run: npm ci --prefer-offline
-
-      - name: Run Backend Tests with Coverage
+      # Backend Analysis
+      - name: Install & Test Backend
         working-directory: backend
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-        run: npm test -- --coverage
+        run: |
+          npm install
+          npm test  # Matches your CI command
 
-      - name: Run Frontend Tests with Coverage
+      # Frontend Analysis
+      - name: Install & Test Frontend
         working-directory: frontend
         continue-on-error: true
-        run: npm test -- --coverage
+        run: |
+          npm install
+          npm test  # Matches your CI command
 
       - name: Verify Coverage Reports
         run: |
