@@ -46,4 +46,3 @@ jobs:
             -Dsonar.javascript.lcov.reportPaths=backend/coverage/lcov.info
             -Dsonar.qualitygate.wait=true
             -Dsonar.branch.name=${{ github.ref_name }}
-            -Dsonar.branch.target=main
