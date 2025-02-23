@@ -40,7 +40,7 @@ jobs:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
         run: |
           npm ci
-          npm test -- --coverage  # Explicit coverage generation
+          npm run test
 
       - name: Verify Coverage Report
         run: |
