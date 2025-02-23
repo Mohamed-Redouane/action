@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Use default GitHub token
 
     steps:
       - name: Checkout Code
@@ -25,6 +25,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
+
+      - name: Cache Backend Dependencies
+        uses: actions/cache@v3
+        with:
+          path: backend/node_modules
+          key: ${{ runner.os }}-backend-${{ hashFiles('backend/package-lock.json') }}
 
       - name: Install & Test Backend
         working-directory: backend
@@ -32,8 +39,12 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
         run: |
-          npm install
-          npm test
+          npm ci
+          npm test -- --coverage  # Explicit coverage generation
+
+      - name: Verify Coverage Report
+        run: |
+          [ -f backend/coverage/lcov.info ] || (echo "Backend coverage missing" && exit 1)
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v4.1.0
@@ -44,6 +55,7 @@ jobs:
             -Dsonar.sources=backend,frontend
             -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/coverage/**
             -Dsonar.javascript.lcov.reportPaths=backend/coverage/lcov.info
+            -Dsonar.coverage.exclusions=**/test/**,**/mock**
             -Dsonar.qualitygate.wait=true
             -Dsonar.branch.name=${{ github.ref_name }}
             ${{ github.ref_name != 'main' && '-Dsonar.branch.target=main' || '' }}
