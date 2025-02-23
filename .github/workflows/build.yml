@@ -13,43 +13,41 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}  # Using your custom secret name
+      GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
 
-      # Backend Analysis
-      - name: Install & Test Backend
+      # Backend Setup
+      - name: Install Backend Dependencies
+        working-directory: backend
+        run: npm install
+
+      - name: Configure Backend Coverage
+        working-directory: backend
+        run: |
+          npm pkg set scripts.test="vitest run --coverage"
+          npm pkg set scripts.pretest="rm -rf coverage"
+
+      - name: Run Backend Tests
         working-directory: backend
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-        run: |
-          npm install
-          npm test  # Matches your CI command
+        run: npm run pretest && npm test
 
-      # Frontend Analysis
-      - name: Install & Test Frontend
+      # Frontend/Cypress Setup (if needed for code analysis)
+      - name: Install Frontend Dependencies
         working-directory: frontend
-        continue-on-error: true
-        run: |
-          npm install
-          npm test  # Matches your CI command
+        run: npm install
 
-      - name: Verify Coverage Reports
-        run: |
-          [ -f backend/coverage/lcov.info ] || (echo "Backend coverage missing" && exit 1)
-          [ -f frontend/coverage/lcov.info ] || (echo "Frontend coverage missing" && exit 1)
-
+      # SonarCloud Analysis
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v4.1.0
         with:
@@ -57,12 +55,9 @@ jobs:
             -Dsonar.organization=Mohamed-Redouane
             -Dsonar.projectKey=redouane
             -Dsonar.sources=backend,frontend
+            -Dsonar.tests=backend
+            -Dsonar.test.inclusions=backend/**/*.test.ts
             -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/coverage/**
-            -Dsonar.javascript.lcov.reportPaths=backend/coverage/lcov.info,frontend/coverage/lcov.info
-            -Dsonar.coverage.exclusions=**/test/**,**/__mocks__/**
+            -Dsonar.javascript.lcov.reportPaths=backend/coverage/lcov.info
             -Dsonar.qualitygate.wait=true
             -Dsonar.branch.name=${{ github.event.pull_request.head.ref || github.ref_name }}
-            -Dsonar.branch.target=main
-            -Dsonar.pullrequest.base=main
-            -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }}
-            -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}

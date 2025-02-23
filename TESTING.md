@@ -16,6 +16,7 @@ npx cypress open
 
 Remove Dist Folder jknk
 
+4
 ```bash
  rm -rf dist
  
