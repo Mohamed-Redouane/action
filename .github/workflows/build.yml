@@ -39,8 +39,8 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v4.1.0
         with:
           args: >
-            -Dsonar.organization=deepdeep
-            -Dsonar.projectKey=redouane
+            -Dsonar.organization=Mohamed-Redouane
+            -Dsonar.projectKey=mohamed-redouane
             -Dsonar.sources=backend,frontend
             -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/coverage/**
             -Dsonar.javascript.lcov.reportPaths=backend/coverage/lcov.info
