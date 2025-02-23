@@ -39,7 +39,7 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v4.1.0
         with:
           args: >
-            -Dsonar.organization=Mohamed-Redouane
+            -Dsonar.organization=redouane
             -Dsonar.projectKey=redouane
             -Dsonar.sources=backend,frontend
             -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/coverage/**
