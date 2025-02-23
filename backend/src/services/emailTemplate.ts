@@ -1,10 +1,10 @@
-export function getVerificationEmailHtml(code: string, username: string): string {
-    return `
+export function getVerificationEmailHtml(code:string, username:string) :string {
+  return `
   <!DOCTYPE html>
   <html>
     <head>
       <meta charset="utf-8" />
-      <title>Email Verification</title>
+      <title>Email Verification - ONCampus</title>
       <style>
         body {
           font-family: Arial, sans-serif;
@@ -17,66 +17,80 @@ export function getVerificationEmailHtml(code: string, username: string): string
           margin: 0 auto;
           background: #ffffff;
           border-radius: 6px;
-          padding: 20px;
+          overflow: hidden;
         }
+        /* Header area with gradient background */
         .header {
+          background: linear-gradient(90deg, #0077cc 0%, #005fa3 100%);
+          color: #ffffff;
+          padding: 20px;
           text-align: center;
-          background-color: #0077cc;
-          color: #fff;
-          padding: 10px;
-          border-radius: 6px 6px 0 0;
+        }
+        .header h1 {
+          margin: 0;
+          font-size: 24px;
         }
         .content {
-          margin: 20px 0;
+          padding: 20px;
           font-size: 16px;
           color: #333333;
+        }
+        .content p {
+          line-height: 1.5;
+          margin: 16px 0;
         }
         .code {
           display: inline-block;
           font-weight: bold;
           background-color: #eee;
-          padding: 8px 12px;
+          padding: 10px 16px;
           margin-top: 20px;
           border-radius: 4px;
+          font-size: 18px;
+          letter-spacing: 1px;
         }
+        /* Footer area */
         .footer {
           text-align: center;
           font-size: 12px;
           color: #999999;
-          margin-top: 20px;
+          background-color: #fafafa;
+          padding: 10px 20px;
+        }
+        .footer p {
+          margin: 5px 0;
         }
       </style>
     </head>
     <body>
       <div class="container">
         <div class="header">
-          <h1>Your App Name</h1>
+          <h1>ONCampus</h1>
         </div>
         <div class="content">
           <p>Hi ${username || "User"},</p>
-          <p>Thanks for signing up! Please use the following code to verify your email:</p>
+          <p>Thank you for signing up! Please use the following code to verify your email address:</p>
           <div class="code">${code}</div>
-          <p>This code is valid for 10 minutes.</p>
-          <p>Best,<br />Your App Team</p>
+          <p>This code is valid for 10 minutes. If you did not create an account with ONCampus, you can safely ignore this message.</p>
+          <p>Best regards,<br />The ONCampus Team</p>
         </div>
         <div class="footer">
-          &copy; ${new Date().getFullYear()} Your App Name
+          <p>&copy; ${new Date().getFullYear()} ONCampus. All rights reserved.</p>
         </div>
       </div>
     </body>
   </html>
   `;
-  }
-  
-  export function getPasswordResetEmailHtml(code: string, username: string): string {
-    return `
+}
+
+export function getPasswordResetEmailHtml(code:string, username:string):string {
+  return `
   <!DOCTYPE html>
   <html>
     <head>
       <meta charset="utf-8" />
-      <title>Password Reset</title>
+      <title>Password Reset - ONCampus</title>
       <style>
-        /* Same styling or different, your choice */
         body {
           font-family: Arial, sans-serif;
           background: #f6f6f6;
@@ -88,54 +102,68 @@ export function getVerificationEmailHtml(code: string, username: string): string
           margin: 0 auto;
           background: #ffffff;
           border-radius: 6px;
-          padding: 20px;
+          overflow: hidden;
         }
+        /* Header area with gradient background */
         .header {
+          background: linear-gradient(90deg, #cc0000 0%, #990000 100%);
+          color: #ffffff;
+          padding: 20px;
           text-align: center;
-          background-color: #cc0000;
-          color: #fff;
-          padding: 10px;
-          border-radius: 6px 6px 0 0;
+        }
+        .header h1 {
+          margin: 0;
+          font-size: 24px;
         }
         .content {
-          margin: 20px 0;
+          padding: 20px;
           font-size: 16px;
           color: #333333;
+        }
+        .content p {
+          line-height: 1.5;
+          margin: 16px 0;
         }
         .code {
           display: inline-block;
           font-weight: bold;
           background-color: #eee;
-          padding: 8px 12px;
+          padding: 10px 16px;
           margin-top: 20px;
           border-radius: 4px;
+          font-size: 18px;
+          letter-spacing: 1px;
         }
+        /* Footer area */
         .footer {
           text-align: center;
           font-size: 12px;
           color: #999999;
-          margin-top: 20px;
+          background-color: #fafafa;
+          padding: 10px 20px;
+        }
+        .footer p {
+          margin: 5px 0;
         }
       </style>
     </head>
     <body>
       <div class="container">
         <div class="header">
-          <h1>Password Reset</h1>
+          <h1>Password Reset - ONCampus</h1>
         </div>
         <div class="content">
           <p>Hi ${username || "User"},</p>
-          <p>We received a request to reset your password. Use the code below:</p>
+          <p>We received a request to reset your ONCampus password. Use the code below to proceed:</p>
           <div class="code">${code}</div>
-          <p>If you did not request a password reset, please ignore this message.</p>
-          <p>Best,<br />Your App Team</p>
+          <p>If you did not request a password reset, no further action is required. Simply ignore this message and your account will remain unchanged.</p>
+          <p>Best regards,<br />The ONCampus Team</p>
         </div>
         <div class="footer">
-          &copy; ${new Date().getFullYear()} Your App Name
+          <p>&copy; ${new Date().getFullYear()} ONCampus. All rights reserved.</p>
         </div>
       </div>
     </body>
   </html>
   `;
-  }
-  
+}

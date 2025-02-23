@@ -14,8 +14,9 @@ npx cypress open
 
 ## Running Jest Tests (Unit Tests)
 
-Remove Dist Folder 
+Remove Dist Folder jknk
 
+4
 ```bash
  rm -rf dist
  
