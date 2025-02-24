@@ -12,6 +12,10 @@ module.exports = defineConfig({
       runMode: 2,
       openMode: 0,
     },
+    defaultCommandTimeout: 10000,
+    requestTimeout: 15000, 
+    experimentalSessionAndOrigin: true, 
+   
     setupNodeEvents(on, config) {
       require("@cypress/code-coverage/task")(on, config);
       return config;
@@ -24,6 +28,3 @@ module.exports = defineConfig({
     },
   },
 });
-  
-
-
