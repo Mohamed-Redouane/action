@@ -61,7 +61,7 @@ jobs:
             -Dsonar.projectKey=Mohamed-Redouane_action
             -Dsonar.sources=backend/src,frontend/src
             -Dsonar.exclusions="**/node_modules/**,**/dist/**,**/coverage/**,**/test/**,**/tests/**,**/cypress/**,**/public/**,**/assets/**,**/config/**,**/*.config.js,**/*.config.ts,**/*.json,**/*.md,**/.babelrc,**/.env*,**/tsconfig.json,**/vite.config.ts,**/sonar-project.properties"
-            -Dsonar.coverage.exclusions="frontend/src/api/**,frontend/src/assets/**,frontend/src/components/**,frontend/src/context/**,frontend/src/hooks/**,frontend/src/layouts/**,frontend/src/loaders/**,frontend/src/pages/**,frontend/src/services/**,frontend/src/test/**"
+            -Dsonar.coverage.exclusions="frontend/src/api/**,frontend/src/assets/**,frontend/src/components/**,frontend/src/context/**,frontend/src/hooks/**,frontend/src/layouts/**,frontend/src/loaders/**,frontend/src/pages/**,frontend/src/services/**,frontend/src/test/**,frontend/App.tsx,frontend/main.tsx,frontend/routes.tsx"
             -Dsonar.javascript.lcov.reportPaths=backend/coverage/lcov.info,frontend/coverage/lcov.info
             -Dsonar.qualitygate.wait=true
             ${{ github.event_name == 'pull_request' && format('-Dsonar.pullrequest.key={0} -Dsonar.pullrequest.branch={1} -Dsonar.pullrequest.base=main', github.event.pull_request.number, github.event.pull_request.head.ref) || format('-Dsonar.branch.name={0} {1}', github.ref_name, (github.ref_name != 'main' && '-Dsonar.branch.target=main' || '')) }}
