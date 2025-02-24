@@ -19,7 +19,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4.1.0
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # Ensure full history for Sonar analysis
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -27,6 +27,7 @@ jobs:
           node-version: 20
           cache: 'npm'
 
+      # Install and run tests for Backend
       - name: Install & Test Backend
         working-directory: backend
         env:
@@ -34,16 +35,33 @@ jobs:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
         run: |
           npm ci
-          npm run test
+          npm run test:coverage
 
+      # Store Backend Test Coverage
+      - name: Store Backend Test Coverage
+        run: mkdir -p backend/coverage && cp backend/coverage/lcov.info backend/
+
+      # Install and run tests for Frontend
+      - name: Install & Test Frontend
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run test:coverage
+
+      # Store Frontend Test Coverage
+      - name: Store Frontend Test Coverage
+        run: mkdir -p frontend/coverage && cp frontend/coverage/lcov.info frontend/
+
+      # Run SonarCloud Analysis
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v4.1.0
         with:
           args: >
             -Dsonar.organization=mohamed-redouane
             -Dsonar.projectKey=Mohamed-Redouane_action
-            -Dsonar.sources=backend,frontend
-            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/coverage/**
-            -Dsonar.javascript.lcov.reportPaths=backend/coverage/lcov.info
+            -Dsonar.sources=backend/src,frontend/src
+            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/coverage/**,**/test/**,**/tests/**,**/cypress/**,
+              **/public/**,**/assets/**,**/config/**,**/*.config.js,**/*.config.ts,**/*.json,**/*.md,**/.babelrc,**/.env*,**/tsconfig.json,**/vite.config.ts,**/sonar-project.properties
+            -Dsonar.javascript.lcov.reportPaths=backend/coverage/lcov.info,frontend/coverage/lcov.info
             -Dsonar.qualitygate.wait=true
             ${{ github.event_name == 'pull_request' && format('-Dsonar.pullrequest.key={0} -Dsonar.pullrequest.branch={1} -Dsonar.pullrequest.base=main', github.event.pull_request.number, github.event.pull_request.head.ref) || format('-Dsonar.branch.name={0} {1}', github.ref_name, (github.ref_name != 'main' && '-Dsonar.branch.target=main' || '')) }}

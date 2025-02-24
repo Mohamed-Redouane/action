@@ -20,6 +20,7 @@ Remove Dist Folder
  rm -rf dist
  
 ```
+'7898798
 
 
 ### Run Jest Tests
