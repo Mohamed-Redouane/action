@@ -115,5 +115,50 @@ export class AuthController {
     }
   }
 
+public async me(req: Request, res: Response): Promise<void> {
+
+  try {
+    const token = req.cookies["session"];
+    if (!token) {
+      console.log("No session token provided");
+      res.status(401).json({ error: "No session token provided" });
+      return;
+    }
+
+    const session = await container.sessionRepository.findById(token);
+    if (!session) {
+      console.log("Invalid session token");
+      res.status(401).json({ error: "Invalid session token" });
+      return;
+    }
+
+    const nowSec = Math.floor(Date.now() / 1000);
+    if (session.expiresAt < nowSec) {
+      await container.sessionRepository.deleteById(token);
+      console.log("Session expired");
+      res.status(401).json({ error: "Session expired" });
+      return;
+    }
+
+    const user = await container.userRepository.findById(session.userId);
+    if (!user) {
+      console.log("User not found");
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    console.log("User found:", user);
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.status(200).json({ user });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    console.error("Error in /me endpoint:", message);
+    res.status(500).json({ error: message });
+  }
+}
+
+
 
 }

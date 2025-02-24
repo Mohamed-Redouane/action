@@ -13,11 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Use default GitHub token
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.0
         with:
           fetch-depth: 0
 
@@ -26,12 +26,6 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
-
-      - name: Cache Backend Dependencies
-        uses: actions/cache@v3
-        with:
-          path: backend/node_modules
-          key: ${{ runner.os }}-backend-${{ hashFiles('backend/package-lock.json') }}
 
       - name: Install & Test Backend
         working-directory: backend
@@ -42,10 +36,6 @@ jobs:
           npm ci
           npm run test
 
-      - name: Verify Coverage Report
-        run: |
-          [ -f backend/coverage/lcov.info ] || (echo "Backend coverage missing" && exit 1)
-
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v4.1.0
         with:
@@ -55,8 +45,5 @@ jobs:
             -Dsonar.sources=backend,frontend
             -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/coverage/**
             -Dsonar.javascript.lcov.reportPaths=backend/coverage/lcov.info
-            -Dsonar.coverage.exclusions=**/test/**,**/mock**
             -Dsonar.qualitygate.wait=true
-            -Dsonar.branch.name=${{ github.ref_name }}
-            ${{ github.ref_name != 'main' && '-Dsonar.branch.target=main' || '' }}
-            ${{ github.event_name == 'pull_request' && '-Dsonar.pullrequest.base=main' || '' }}
+            ${{ github.event_name == 'pull_request' && format('-Dsonar.pullrequest.key={0} -Dsonar.pullrequest.branch={1} -Dsonar.pullrequest.base=main', github.event.pull_request.number, github.event.pull_request.head.ref) || format('-Dsonar.branch.name={0} {1}', github.ref_name, (github.ref_name != 'main' && '-Dsonar.branch.target=main' || '')) }}

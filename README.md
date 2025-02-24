@@ -47,6 +47,24 @@
 
 Click on the localhost link that appears in the Frontend terminal
 
+## Environment Variables
+
+We provide a file named `.env.example` with placeholder environment variables. To configure your local environment:
+
+1. **Create a `.env` File**  
+   Copy `.env.example` to a new file called `.env` in the **Backend** folder (and in the **Frontend** folder if applicable):
+   ```bash
+   cp .env.example .env
+   ```
+2. **Update Values**  
+   Open `.env` and replace the placeholder values with the correct information for your local environment (e.g., database credentials, API keys).
+3. **Do Not Commit `.env`**  
+   Your `.env` file should be ignored by Git to keep sensitive data private. Make sure to avoid committing any real credentials to the repository.
+
+### Sharing Keys with Collaborators
+
+We will share the required keys securely in a private Discord channel for collaborators.
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Team Members

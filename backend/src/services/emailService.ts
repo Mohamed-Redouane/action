@@ -7,9 +7,9 @@ export async function sendVerificationEmail(email: string, code: string, usernam
   const htmlContent = getVerificationEmailHtml(code, username);
   try {
     await resend.emails.send({
-      from: "no-reply@ourdomain.com",
+      from: "no-reply@cu-oncampus.ca",
       to: email,
-      subject: "Verify Your Email - Concordia Guide",
+      subject: "Verify Your Email - ONCampus",
       html: htmlContent,
     });
     console.log(`✅ Verification email sent to ${email}`);
@@ -23,9 +23,9 @@ export async function sendPasswordResetEmail(email: string, code: string, userna
   const htmlContent = getPasswordResetEmailHtml(code, username);
   try {
     await resend.emails.send({
-      from: "no-reply@ourdomain.com",
+      from: "no-reply@cu-oncampus.ca",
       to: email,
-      subject: "Reset Your Password - Concordia Guide",
+      subject: "Reset Your Password - ONCampus",
       html: htmlContent,
     });
     console.log(`✅ Password reset email sent to ${email}`);

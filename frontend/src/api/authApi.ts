@@ -1,94 +1,126 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
-// Create a reusable API instance with default configurations
+
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:3000",
-  withCredentials: true, 
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-/**
- * Register a new user
- */
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+  
+    if (
+      error.response?.status === 401 &&
+      !(error.config.url && error.config.url.includes("/api/auth/me"))
+    ) {
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
+interface ErrorResponse {
+  error?: string;
+}
+
+function isAxiosError<T = unknown>(error: unknown): error is AxiosError<T> {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "isAxiosError" in error &&
+    (error as AxiosError).isAxiosError === true
+  );
+}
+
+function extractErrorMessage(error: unknown, fallback: string): string {
+  if (isAxiosError<ErrorResponse>(error)) {
+    return error.response?.data?.error ?? fallback;
+  }
+  return fallback;
+}
+
 export async function registerUser(username: string, email: string, password: string) {
   try {
     const response = await api.post("/api/auth/register", { username, email, password });
-    return response.data; // { message, user }
-  } catch (error: any) {
-    throw new Error(error.response?.data?.error || "Registration failed.");
+    return response.data;
+  } catch (error: unknown) {
+    const message = extractErrorMessage(error, "Registration failed.");
+    throw new Error(message);
   }
 }
 
-/**
- * Log in an existing user
- */
 export async function loginUser(email: string, password: string) {
   try {
     const response = await api.post("/api/auth/login", { email, password });
-    return response.data; // { message, user }
-  } catch (error: any) {
-    throw new Error(error.response?.data?.error || "Login failed.");
+    return response.data; 
+  } catch (error: unknown) {
+    const message = extractErrorMessage(error, "Login failed.");
+    throw new Error(message);
   }
 }
 
-/**
- * Log out the current user (invalidates session cookie on the server)
- */
 export async function logoutUser() {
   try {
     const response = await api.post("/api/auth/logout");
-    return response.data; // { message: "Logged out" }
-  } catch (error: any) {
-    throw new Error(error.response?.data?.error || "Logout failed.");
+    return response.data; 
+  } catch (error: unknown) {
+    const message = extractErrorMessage(error, "Logout failed.");
+    throw new Error(message);
   }
 }
 
-/**
- * Request a password reset
- */
 export async function requestPasswordReset(email: string) {
   try {
     const response = await api.post("/api/auth/request-password-reset", { email });
     return response.data;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.error || "Failed to request password reset.");
+  } catch (error: unknown) {
+    const message = extractErrorMessage(error, "Failed to request password reset.");
+    throw new Error(message);
   }
 }
 
-/**
- * Reset password using the given code
- */
 export async function resetPassword(code: string, newPassword: string) {
   try {
     const response = await api.post("/api/auth/reset-password", { code, newPassword });
     return response.data;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.error || "Failed to reset password.");
+  } catch (error: unknown) {
+    const message = extractErrorMessage(error, "Failed to reset password.");
+    throw new Error(message);
   }
 }
 
-/**
- * Verify user email with a code
- */
 export async function verifyEmail(userId: number, code: string) {
   try {
     const response = await api.post("/api/auth/verify-email", { userId, code });
     return response.data;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.error || "Email verification failed.");
+  } catch (error: unknown) {
+    const message = extractErrorMessage(error, "Email verification failed.");
+    throw new Error(message);
   }
 }
 
-/**
- * Resend a verification email
- */
 export async function resendVerification(userId: number) {
   try {
     const response = await api.post("/api/auth/resend-verification", { userId });
     return response.data;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.error || "Failed to resend verification email.");
+  } catch (error: unknown) {
+    const message = extractErrorMessage(error, "Failed to resend verification email.");
+    throw new Error(message);
   }
 }
+
+export async function getCurrentUser() {
+  try {
+    const response = await api.get("/api/auth/me");
+    return response.data;
+  } catch (error: unknown) {
+    const message = extractErrorMessage(error, "Failed to fetch current user.");
+    throw new Error(message);
+  }
+}
+
+export { api };

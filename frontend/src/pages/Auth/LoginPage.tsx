@@ -1,59 +1,34 @@
-// src/pages/LoginPage.tsx
-
-import React, { useState } from 'react';
-import { loginUser } from '../../api/authApi';
-// Possibly import a global AuthContext or user store
+import { useState } from 'react';
+import { useAuthService } from '../../services/authService';
+import { LoginForm } from '../../Components/Auth/LoginForm';
+import { useNavigate } from 'react-router-dom';
+import { isAxiosError, ErrorResponse } from '../../utils/axiosUtils'; 
 
 export function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { handleLogin } = useAuthService();
+  const navigate = useNavigate();
+
   const [error, setError] = useState('');
-  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  async function handleLogin(e: React.FormEvent) {
-    e.preventDefault();
+  async function onSubmit(email: string, password: string) {
     setError('');
-    setMessage('');
-
+    setLoading(true);
     try {
-      const data = await loginUser(email, password);
-      setMessage(data.message);
-      // data.user => store in global context if you want
-      // e.g. setAuthUser(data.user)
-    } catch (err: any) {
-      setError(err?.response?.data?.error || 'Failed to login.');
+      await handleLogin(email, password);
+      navigate('/');
+    } catch (err: unknown) {
+      if (isAxiosError<ErrorResponse>(err)) {
+        setError(err.response?.data?.error || 'Login failed');
+      } else if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred.');
+      }
+    } finally {
+      setLoading(false);
     }
   }
 
-  return (
-    <div className="auth-form">
-      <h2>Welcome back</h2>
-      <p>Enter your credentials to access your account</p>
-
-      {error && <p className="error">{error}</p>}
-      {message && <p className="success">{message}</p>}
-
-      <form onSubmit={handleLogin}>
-        <label>Email</label>
-        <input
-          type="email"
-          value={email}
-          placeholder="me@example.com"
-          onChange={(e) => setEmail(e.target.value)}
-        />
-
-        <label>Password</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-
-        <button type="submit">Sign In</button>
-      </form>
-
-      {/* Link to the "Forgot password?" page */}
-      <a href="/forgot-password">Forgot your password?</a>
-    </div>
-  );
+  return <LoginForm onSubmit={onSubmit} error={error} isLoading={loading} />;
 }

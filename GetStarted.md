@@ -26,7 +26,6 @@ Follow these Git commands for effective collaboration:
    git add .
    ```
 
-.
 6. **Commit your changes**:
    ```bash
    git commit -m "Your commit message"

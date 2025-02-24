@@ -3,7 +3,7 @@ name: Automated Testing Pipeline
 on:
   push:
   pull_request:
-  
+
 jobs:
   backend-tests:
     name: Run Backend Tests
@@ -28,8 +28,29 @@ jobs:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
         run: npm test
 
-  frontend-and-cypress-tests:
-    name: Run Frontend and Cypress Tests
+  frontend-tests:
+    name: Run Frontend Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install Frontend Dependencies
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Run Frontend Unit Tests
+        working-directory: ./frontend
+        run: npm run test
+
+  e2e-tests:
+    name: Run Cypress Tests
+    needs: [backend-tests, frontend-tests]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code

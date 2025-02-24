@@ -19,5 +19,6 @@ router.post("/request-password-reset",passwordResetRateLimiter, asyncHandler(aut
 router.post("/reset-password", asyncHandler(authController.resetPassword.bind(authController)));
 // optional
 router.post("/resend-verification", asyncHandler(authController.resendVerification.bind(authController)));
+router.get("/me", asyncHandler(authController.me.bind(authController)));
 
 export default router;

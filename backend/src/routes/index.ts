@@ -10,6 +10,5 @@ router.get("/error-test", (_req, _res) => {
     throw new Error("Test error from route");
   });
   
-  
 
 export default router;
