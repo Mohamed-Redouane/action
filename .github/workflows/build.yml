@@ -60,9 +60,7 @@ jobs:
             -Dsonar.organization=mohamed-redouane
             -Dsonar.projectKey=Mohamed-Redouane_action
             -Dsonar.sources=backend/src,frontend/src
-            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/coverage/**,**/test/**,**/tests/**,**/cypress/**,
-              **/public/**,**/assets/**,**/config/**,**/*.config.js,**/*.config.ts,**/*.json,**/*.md,**/.babelrc,
-              **/.env*,**/tsconfig.json,**/vite.config.ts,**/sonar-project.properties
+            -Dsonar.exclusions="**/node_modules/**,**/dist/**,**/coverage/**,**/test/**,**/tests/**,**/cypress/**,**/public/**,**/assets/**,**/config/**,**/*.config.js,**/*.config.ts,**/*.json,**/*.md,**/.babelrc,**/.env*,**/tsconfig.json,**/vite.config.ts,**/sonar-project.properties"
             -Dsonar.coverage.exclusions=frontend/src/**,!frontend/src/utils/**
             -Dsonar.javascript.lcov.reportPaths=backend/coverage/lcov.info,frontend/coverage/lcov.info
             -Dsonar.qualitygate.wait=true
