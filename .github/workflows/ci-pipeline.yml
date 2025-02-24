@@ -48,9 +48,8 @@ jobs:
         working-directory: ./frontend
         run: npm run test
 
-  e2e-tests:
-    name: Run Cypress Tests
-    needs: [backend-tests, frontend-tests]
+  cypress-tests:
+    name: Run Frontend and Cypress Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
