@@ -49,7 +49,7 @@ jobs:
         run: npm run test
 
   cypress-tests:
-    name: Run Frontend and Cypress Tests
+    name: Run Cypress Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
