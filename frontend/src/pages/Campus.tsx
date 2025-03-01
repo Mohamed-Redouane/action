@@ -1,8 +1,8 @@
 import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
 import { useState, useContext, useEffect } from "react";
-import { LocationContext } from "../Components/LocationContext";
-import MapComponent from "../Components/MapComponent";
-import ToggleCampus from "../Components/ToggleCampusComponent";
+import { LocationContext } from "../components/LocationContext";
+import MapComponent from "../components/MapComponent";
+import ToggleCampus from "../components/ToggleCampusComponent";
 
 type CampusType = 'SGW' | 'LOYOLA'; // Define a type for campus to ensure only these two values are valid
 

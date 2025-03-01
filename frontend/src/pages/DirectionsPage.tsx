@@ -1,4 +1,4 @@
-import SearchBar from "../Components/SearchBar";
+import SearchBar from "../components/SearchBar";
 
 function DirectionsPage() {
     return (

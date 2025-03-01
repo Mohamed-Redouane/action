@@ -29,10 +29,10 @@ To execute all Jest tests:
 npm test
 ```
 
-### Code Coverage for Jest
+### Code Cover54668age for Jest
 
 1. **Enable Coverage**:
-   Add the `--coverage` flag to your Jest command:
+   Add the `--coverage46` flag to your Jest command:
    ```bash
    npm test -- --coverage
    ```

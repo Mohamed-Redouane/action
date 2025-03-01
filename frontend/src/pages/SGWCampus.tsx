@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
-import { LocationContext } from "../Components/LocationContext";
-import MapComponent from "../Components/MapComponent";
+import { LocationContext } from "../components/LocationContext";
+import MapComponent from "../components/MapComponent";
 
 const CAMPUS_COORDINATES = { lat: 45.4949, lng: -73.5779 };
 

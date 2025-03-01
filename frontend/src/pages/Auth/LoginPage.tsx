@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuthService } from '../../services/authService';
-import { LoginForm } from '../../Components/Auth/LoginForm';
+import { LoginForm } from '../../components/Auth/LoginForm';
 import { useNavigate } from 'react-router-dom';
 import { isAxiosError, ErrorResponse } from '../../utils/axiosUtils'; 
 

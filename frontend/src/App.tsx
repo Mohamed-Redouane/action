@@ -1,11 +1,11 @@
 import "./App.css";
 import { useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import NavBar from "./Components/NavBar";
-import BottomNavBar from "./Components/BottomNavBar";
-import UserLocation from "./Components/UserLocation";
-import Modal from "./Components/Modal"; 
-import { LocationProvider } from "./Components/LocationContext";
+import NavBar from "./components/NavBar";
+import BottomNavBar from "./components/BottomNavBar";
+import UserLocation from "./components/UserLocation";
+import Modal from "./components/Modal"; 
+import { LocationProvider } from "./components/LocationContext";
 
 function App() {
   const location = useLocation();
