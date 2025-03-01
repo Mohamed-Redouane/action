@@ -47,7 +47,7 @@ app.get('/', (req, res) => {
 });
 
 
-const frontendPath = path.join(__dirname, 'public');
+const frontendPath = path.join(__dirname, 'dist');
 app.use(express.static(frontendPath));
 
 // Catch-all route to serve React frontend
