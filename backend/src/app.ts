@@ -1,4 +1,3 @@
-import 'dotenv/config'; 
 import express, { Application } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
@@ -16,22 +15,12 @@ const __dirname = path.dirname(__filename);
 
 const app: Application = express();
 
-// 1) Build array of allowed origins
-const allowedOrigins: string[] = [
-  'http://localhost:5173',  // Local dev
-];
+// CORS Configuration
+app.use(cors({
+  origin: ["https://action-production.up.railway.app", "http://localhost:5173"],
+  credentials: true,
+}));
 
-if (process.env.CLIENT_URL) {
-  allowedOrigins.push(process.env.CLIENT_URL); // Production URL from .env
-}
-
-// 2) Use array in CORS
-app.use(
-  cors({
-    origin: allowedOrigins,
-    credentials: true,
-  })
-);
 
 app.use(morgan('dev'));
 app.use(express.json());
@@ -56,6 +45,12 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+/**
+ * If you previously had `app.get('/')`, remove/comment it out
+ * to avoid overshadowing the frontend.
+ */
+
+// =============================================
 // Serve the React frontend directly from __dirname
 app.use(express.static(__dirname));
 
