@@ -7,6 +7,7 @@ const BottomNavBar = () => {
   const location = useLocation();
   const [openMapMenu, setOpenMapMenu] = useState(false);
 
+  // This computed value is now actually used in the JSX below
   const mapLabel = useMemo(() => {
     if (location.pathname === '/') return 'Map: SGW';
     if (location.pathname === '/LOYcampus') return 'Map: Loyola';
@@ -23,7 +24,12 @@ const BottomNavBar = () => {
     }
   };
 
-  const NavButton = ({ icon: Icon, label, value, isActive }: { icon: React.ElementType; label: string; value: string; isActive: boolean }) => (
+  const NavButton = ({ icon: Icon, label, value, isActive }: { 
+    icon: React.ElementType; 
+    label: string; 
+    value: string; 
+    isActive: boolean 
+  }) => (
     <button
       onClick={() => handleNavigation(value)}
       aria-label={label}
@@ -39,11 +45,15 @@ const BottomNavBar = () => {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50">
-      
-
       <nav className="flex h-16 bg-white shadow-lg backdrop-blur-md">
         <NavButton icon={Bus} label="Shuttle" value="/shuttle" isActive={location.pathname === '/shuttle'} />
-        <NavButton icon={Map} label="Map" value="/" isActive={location.pathname === '/'} />
+        {/* Use the computed mapLabel here */}
+        <NavButton 
+          icon={Map} 
+          label={mapLabel}  // Changed from "Map" to use the computed value
+          value="/" 
+          isActive={location.pathname === '/'} 
+        />
         <NavButton icon={Navigation} label="Directions" value="/directions" isActive={location.pathname === '/directions'} />
         <NavButton icon={Calendar} label="Schedule" value="/schedule" isActive={location.pathname === '/schedule'} />
       </nav>

@@ -1,18 +1,18 @@
-import React, { useEffect, useContext, useState } from "react";
+import { useEffect, useContext, useState } from "react";
 import Modal from "./Modal";
 import { LocationContext } from "./LocationContext";
 import { distanceCalculation } from "../utils/distanceCalculation";
 
 
 function UserLocation() {
-  const { location, setLocation, error, setError } = useContext(LocationContext);
-  const [isCalibrating, setIsCalibrating] = useState<boolean>(true);
+  const { setLocation, error, setError } = useContext(LocationContext);
   const [isOnCampus, setIsOnCampus] = useState<boolean | null>(null);
-  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
   const [watchId, setWatchId] = useState<number | null>(null);
   const [hasReceivedLocation, setHasReceivedLocation] = useState<boolean>(false);
   const [geoJsonData, setGeoJsonData] = useState<any>(null);
-  const [showMessage, setShowMessage] = useState<boolean>(false); // to show message about user being on campus or not
+  const [showOnCampusMessage, setShowOnCampusMessage] = useState<boolean>(false);
+  const [showOffCampusMessage, setShowOffCampusMessage] = useState<boolean>(false);
 
 
   useEffect(() => {
@@ -28,9 +28,13 @@ function UserLocation() {
 
   useEffect(() => {
     if (isOnCampus !== null) {
-      setShowMessage(true);
-      const timer = setTimeout(() => setShowMessage(false), 5000);
-      return () => clearTimeout(timer); // Cleanup on unmount
+      if (isOnCampus) {
+        setShowOnCampusMessage(true);
+        setTimeout(() => setShowOnCampusMessage(false), 5000);
+      } else {
+        setShowOffCampusMessage(true);
+        setTimeout(() => setShowOffCampusMessage(false), 5000);
+      }
     }
   }, [isOnCampus]);
 
@@ -74,21 +78,20 @@ function UserLocation() {
       if (accuracy > 2000) {
         console.warn("Waiting for better accuracy...");
         if (isOnCampus === null) {
-          setIsModalVisible(true);
+          setShowModal(true);
         }
         return;
       }
       
       if (isFarFromCampusBuildings(latitude, longitude)) {
         console.warn("User is far from campus buildings.");
-        setIsModalVisible(true);
+        setShowModal(true);
         return;
       }
 
       setLocation({ lat: latitude, lng: longitude });
-      setIsCalibrating(false);
       setError(null);
-      setIsModalVisible(false);
+      setShowModal(false);
     };
 
     const handleError = (err: GeolocationPositionError) => {
@@ -112,30 +115,39 @@ function UserLocation() {
 
   const handleConfirm = () => {
     setIsOnCampus(true);
-    setIsModalVisible(false);
+    setShowModal(false);
   };
 
   const handleCancel = () => {
     setIsOnCampus(false);
-    setIsModalVisible(false);
+    setShowModal(false);
     if (watchId !== null) {
       navigator.geolocation.clearWatch(watchId);
       console.log("Location tracking stopped.");
     }
   };
 
+  const renderMessages = () => {
+    if (error) {
+      return <Message message={error}/>;
+    }
+    if(!hasReceivedLocation || showModal){
+      return null;
+    }
+
+    return (
+      <>
+        {showOffCampusMessage && <Message message={"You are not on campus."} />}
+        {showOnCampusMessage && <Message  message="Please move closer to a window or an open area to improve GPS accuracy." />}
+      </>
+    );
+  };
+
   return (
     <div>
-      {error ? (
-        <Message isVisible={true} message={error} />
-      ) : !hasReceivedLocation ? null : isModalVisible ? null : (
-        <>
-          {isOnCampus === false && <Message isVisible={showMessage} message="You are not on campus." />}
-          {isOnCampus === true && <Message isVisible={showMessage} message="Please move closer to a window or an open area to improve GPS accuracy." />}
-        </>
-      )}
+      {renderMessages()}
 
-      {isModalVisible && (
+      {showModal && (
         <Modal
           message="Are you on campus?"
           onConfirm={handleConfirm}
@@ -146,36 +158,12 @@ function UserLocation() {
   );
 }
 
-function Message({ isVisible, message }: { isVisible: boolean, message: string }) {
-  const [show, setShow] = useState(isVisible);
-
-  useEffect(() => {
-    
-      if (isVisible) {
-      
-        setShow(true);
-        const timer = setTimeout(() => {
-          setShow(false);
-        }, 3000); // 3 seconds
-        console.log("Message useEffect");
-        return () => clearTimeout(timer); // Cleanup timer on unmount
-      }else{
-        setShow(false);
-      }
-    
-  }, [isVisible]);
-
-  if (!show) return null;
-
-
+function Message({ message }: Readonly<{ message: string }>) {
   return (
     <div id="message" className="fixed flex justify-center self-center bottom-14 m-2 transform -translate-x-1/2 bg-blue-500  text-black px-4 py-2 rounded-md shadow-md transition-opacity duration-500 z-10">
-      {show && (
-        // <p className='fixed bg-white p-4 rounded-md shadow-lg text-red-600 font-bold text-center z-10'>
         <p className="align-middle">
           {message}
         </p>
-      )}
     </div>
   );
 }

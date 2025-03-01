@@ -1,4 +1,5 @@
-import axios, { AxiosError } from "axios";
+import axios from "axios";
+import { AxiosError } from "axios";
 
 
 const api = axios.create({
@@ -35,10 +36,9 @@ function isAxiosError<T = unknown>(error: unknown): error is AxiosError<T> {
     (error as AxiosError).isAxiosError === true
   );
 }
-
 function extractErrorMessage(error: unknown, fallback: string): string {
-  if (isAxiosError<ErrorResponse>(error)) {
-    return error.response?.data?.error ?? fallback;
+  if (isAxiosError<ErrorResponse>(error) && error.response) {
+    return error.response.data?.error ?? fallback;
   }
   return fallback;
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from "react";
+import { useEffect, useContext } from "react";
 import { useMap } from "@vis.gl/react-google-maps";
 import { LocationContext } from "./LocationContext";
 
@@ -24,11 +24,17 @@ function MapComponent({ geoJsonData, setIsUserInsideBuilding }: MapComponentProp
 
     map.data.forEach((feature) => {
       const geometry = feature.getGeometry();
+
       if (geometry?.getType() === "Polygon") {
+        const polygonPaths = (geometry as google.maps.Data.Polygon).getArray().map((path) =>
+          (path as google.maps.Data.LinearRing).getArray().map((coord) => ({
+            lat: (coord as google.maps.LatLng).lat(),
+            lng: (coord as google.maps.LatLng).lng(),
+          }))
+        );
+
         const polygon = new google.maps.Polygon({
-          paths: geometry.getArray().map((path) =>
-            path.getArray().map((coord) => ({ lat: coord.lat(), lng: coord.lng() }))
-          ),
+          paths: polygonPaths,
         });
 
         if (google.maps.geometry.poly.containsLocation(userLatLng, polygon)) {
@@ -46,4 +52,4 @@ function MapComponent({ geoJsonData, setIsUserInsideBuilding }: MapComponentProp
   return null;
 }
 
-export default MapComponent
+export default MapComponent;

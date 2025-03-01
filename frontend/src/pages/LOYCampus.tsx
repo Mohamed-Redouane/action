@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext } from "react";
 import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
 import { LocationContext } from "../Components/LocationContext";
 import MapComponent from "../Components/MapComponent";
