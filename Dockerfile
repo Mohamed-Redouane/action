@@ -29,6 +29,7 @@ ENV PORT=3000
 ENV NODE_ENV=production
 ENV DATABASE_URL=${DATABASE_URL}
 ENV RESEND_API_KEY=${RESEND_API_KEY}
+ENV CLIENT_URL=${CLIENT_URL}
 
 # Ensure TypeScript is compiled before running
 RUN npm run build
