@@ -22,7 +22,7 @@ RUN npm install
 COPY backend ./
 
 # Copy frontend build output to backend's public folder
-COPY --from=frontend-builder /app/dist ./public
+COPY --from=frontend-builder /app/dist ./dist
 
 # Set environment variables (Injected from Railway)
 ENV PORT=3000
