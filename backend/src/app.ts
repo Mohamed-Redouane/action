@@ -46,20 +46,22 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-/*
-  REMOVE or COMMENT OUT this route to avoid overshadowing the frontend
-  app.get('/', (req, res) => {
-    res.send('Hello Asymptotes');
-  });
-*/
+/**
+ * If you previously had `app.get('/')`, remove/comment it out
+ * to avoid overshadowing the frontend.
+ */
 
-// Serve React Frontend
-const frontendPath = path.join(__dirname, 'dist');
-app.use(express.static(frontendPath));
+// =============================================
+// Serve the React frontend directly from __dirname
+app.use(express.static(__dirname));
 
 // Catch-all route => serve index.html for any other request
 app.get('*', (req, res) => {
-  res.sendFile(path.join(frontendPath, 'index.html'));
+  res.sendFile(path.join(__dirname, 'index.html'), (err) => {
+    if (err) {
+      res.status(500).send('Error loading frontend');
+    }
+  });
 });
 
 // Error Handling
