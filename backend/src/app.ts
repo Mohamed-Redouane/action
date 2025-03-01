@@ -2,51 +2,51 @@ import express, { Application } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import routes from './routes/index.js';           
-import { errorMiddleware } from './middlewares/errorMiddleware.js';
-import pool from './config/db.js';
+import { errorMiddleware } from './middlewares/errorMiddleware.js'
+import pool from './config/db.js'
 import { sessionCookieMiddleware } from "./middlewares/sessionMiddleware.js";
 import cookieParser from "cookie-parser";
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Fix __dirname for ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app: Application = express();
 
-const PORT = process.env.PORT || 3000;
-const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
-
-// CORS Configuration
 app.use(
   cors({
-    origin: CLIENT_URL,
-    credentials: true,
+    origin: "http://localhost:5173", 
+    credentials: true, 
   })
 );
-
 app.use(morgan('dev'));
-app.use(express.json());
+app.use(express.json()); 
 app.use(cookieParser());
 
 app.use(sessionCookieMiddleware);
 
-// Connect to Database
-pool.connect((err, client, release) => {
+pool.connect((err,client, release) => {
     if (err) {
       console.error('Database connection failed:', err.stack);
     } else {
       console.log('Database connected successfully');
     }
-    release();
-});
+    release(); 
+  });
+// routes
+app.use('/api', routes); 
 
-// API Routes
-app.use('/api', routes);
-
-// Health Check Endpoint
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// ==================== Serve Frontend ====================
-// Serve static frontend files
+app.get('/', (req, res) => {
+  res.send('Hello Asymptotes');
+});
+
+
 const frontendPath = path.join(__dirname, 'public');
 app.use(express.static(frontendPath));
 
@@ -55,7 +55,6 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
-// Error Middleware
 app.use(errorMiddleware);
 
 export default app;
