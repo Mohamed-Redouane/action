@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
-const ALLOWED_ORIGINS = ["http://localhost:5173"];
+const ALLOWED_ORIGINS = ["http://localhost:5173", "https://action-production.up.railway.app"];
 
 export function sessionCookieMiddleware(req: Request, res: Response, next: NextFunction): void {
   if (req.path === "/" || req.path === "/health") {
